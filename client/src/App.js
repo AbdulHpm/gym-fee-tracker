@@ -116,6 +116,7 @@ function App() {
         <div className="card-body">
           <form onSubmit={handleSubmit} className="row g-2 align-items-end">
             <div className="col-md-3">
+              <label className="form-label">User Name</label>
               <input
                 type="text"
                 name="name"
@@ -127,6 +128,7 @@ function App() {
               />
             </div>
             <div className="col-md-2">
+              <label className="form-label">Phone Number</label>
               <input
                 type="text"
                 name="phone"
@@ -138,6 +140,7 @@ function App() {
               />
             </div>
             <div className="col-md-2">
+              <label className="form-label">Start Date</label>
               <input
                 type="date"
                 name="fee_start_date"
@@ -148,6 +151,7 @@ function App() {
               />
             </div>
             <div className="col-md-2">
+              <label className="form-label">Due Date</label>
               <input
                 type="date"
                 name="fee_due_date"
