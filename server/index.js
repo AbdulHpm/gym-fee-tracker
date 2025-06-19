@@ -24,13 +24,7 @@ db.serialize(() => {
       fee_due_date TEXT NOT NULL
     )
   `);
-  // Try to add phone column if it doesn't exist (for existing DBs)
-  db.get("PRAGMA table_info(users)", (err, row) => {
-    if (row && !row.phone) {
-      db.run('ALTER TABLE users ADD COLUMN phone TEXT');
-    }
   });
-});
 
 // API Endpoints
 
