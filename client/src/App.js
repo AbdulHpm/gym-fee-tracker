@@ -14,8 +14,8 @@ function App() {
   // Fetch users from backend
   const fetchUsers = () => {
     const url = search
-      ? `http://localhost:5000/users?search=${encodeURIComponent(search)}`
-      : "http://localhost:5000/users";
+      ? `https://gym-fee-tracker.onrender.com/users?search=${encodeURIComponent(search)}`
+      : "https://gym-fee-tracker.onrender.com/users";
     fetch(url)
       .then((res) => res.json())
       .then((data) => setUsers(data));
@@ -36,7 +36,7 @@ function App() {
     e.preventDefault();
     if (editingId) {
       // Edit user
-      fetch(`http://localhost:5000/users/${editingId}`, {
+      fetch(`https://gym-fee-tracker.onrender.com/users/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -49,7 +49,7 @@ function App() {
         });
     } else {
       // Add user
-      fetch("http://localhost:5000/users", {
+      fetch("https://gym-fee-tracker.onrender.com/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -65,7 +65,7 @@ function App() {
   // Handle delete
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      fetch(`http://localhost:5000/users/${id}`, { method: "DELETE" })
+      fetch(`https://gym-fee-tracker.onrender.com/users/${id}`, { method: "DELETE" })
         .then((res) => res.json())
         .then(() => fetchUsers());
     }
