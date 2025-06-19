@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Oswald:wght@700&display=swap');
+
+body {
+  background: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -34,5 +41,124 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.header-logo {
+  height: 48px;
+  margin-bottom: 0.5rem;
+}
+
+.maxfit-title {
+  font-family: 'Montserrat', 'Oswald', Arial, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1976d2;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  letter-spacing: 2px;
+  border-bottom: 3px solid #e53935;
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+.card {
+  border-radius: 1rem !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+}
+
+.form-label {
+  font-weight: 600;
+}
+
+.form-control:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.15);
+  transition: box-shadow 0.2s;
+}
+
+.table {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #f7f7fa;
+}
+.table-hover tbody tr:hover {
+  background-color: #e3f2fd;
+  transition: background 0.2s;
+}
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.badge.bg-success {
+  background: #43a047 !important;
+  font-size: 1em;
+  padding: 0.5em 1em;
+  border-radius: 1em;
+}
+.badge.bg-danger {
+  background: #e53935 !important;
+  font-size: 1em;
+  padding: 0.5em 1em;
+  border-radius: 1em;
+}
+
+.btn-primary {
+  background: #1976d2 !important;
+  border: none;
+  font-weight: 600;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+  background: #1565c0 !important;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+}
+.btn-warning {
+  background: #ffb300 !important;
+  color: #222;
+  border: none;
+}
+.btn-danger {
+  background: #e53935 !important;
+  border: none;
+}
+.btn-outline-danger {
+  color: #e53935 !important;
+  border-color: #e53935 !important;
+}
+.btn-outline-danger:hover {
+  background: #e53935 !important;
+  color: #fff !important;
+}
+
+.alert {
+  border-radius: 0.75rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: opacity 0.2s;
+}
+
+footer {
+  margin-top: 3rem;
+  padding: 1.5rem 0 0.5rem 0;
+  text-align: center;
+  color: #888;
+  font-size: 1rem;
+  border-top: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+  .maxfit-title {
+    font-size: 1.5rem;
+  }
+  .card {
+    padding: 0.5rem;
+  }
+  .table-responsive {
+    font-size: 0.95rem;
   }
 }
