@@ -5,10 +5,10 @@ const { Pool } = require('pg');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Use your Render PostgreSQL connection string here
+// Always use SSL for PostgreSQL on Render
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://gym_fee_tracker_db_user:0KXp51IWjGJ5vzL1E33lleNrgiPDP5i9@dpg-d19vfbqdbo4c73bup8l0-a.frankfurt-postgres.render.com/gym_fee_tracker_db',
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+  ssl: { rejectUnauthorized: false }
 });
 
 app.use(cors());
