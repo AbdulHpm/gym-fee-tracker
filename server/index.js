@@ -1,93 +1,98 @@
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const { Pool } = require('pg');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Use your Render PostgreSQL connection string here
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://gym_fee_tracker_db_user:0KXp51IWjGJ5vzL1E33lleNrgiPDP5i9@dpg-d19vfbqdbo4c73bup8l0-a.frankfurt-postgres.render.com/gym_fee_tracker_db',
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+});
+
 app.use(cors());
 app.use(express.json());
 
-// Database setup
-const dbPath = path.resolve(__dirname, 'gym-fee-tracker.db');
-const db = new sqlite3.Database(dbPath);
+// Health check endpoint (optional, but good for Render)
+app.get('/', (req, res) => {
+  res.send('Gym Fee Tracker backend is running!');
+});
 
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      phone TEXT NOT NULL,
-      fee_start_date TEXT NOT NULL,
-      fee_due_date TEXT NOT NULL
-    )
-  `);
-  });
-
-// API Endpoints
+// Create table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    fee_start_date DATE NOT NULL,
+    fee_due_date DATE NOT NULL
+  )
+`).catch(err => console.error('Error creating table:', err));
 
 // Get all users (with optional search)
-app.get('/users', (req, res) => {
-  const { search } = req.query;
-  let query = 'SELECT * FROM users';
-  let params = [];
-  if (search) {
-    query += ' WHERE name LIKE ? OR phone LIKE ?';
-    params = [`%${search}%`, `%${search}%`];
-  }
-  db.all(query, params, (err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+app.get('/users', async (req, res) => {
+  try {
+    const { search } = req.query;
+    let result;
+    if (search) {
+      result = await pool.query(
+        "SELECT * FROM users WHERE name ILIKE $1 OR phone ILIKE $2",
+        [`%${search}%`, `%${search}%`]
+      );
+    } else {
+      result = await pool.query("SELECT * FROM users");
     }
-    res.json(rows);
-  });
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Add a new user
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
   const { name, phone, fee_start_date, fee_due_date } = req.body;
   if (!name || !phone || !fee_start_date || !fee_due_date) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
-  db.run(
-    'INSERT INTO users (name, phone, fee_start_date, fee_due_date) VALUES (?, ?, ?, ?)',
-    [name, phone, fee_start_date, fee_due_date],
-    function (err) {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ id: this.lastID, name, phone, fee_start_date, fee_due_date });
-    }
-  );
+  try {
+    const result = await pool.query(
+      "INSERT INTO users (name, phone, fee_start_date, fee_due_date) VALUES ($1, $2, $3, $4) RETURNING *",
+      [name, phone, fee_start_date, fee_due_date]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Delete a user
-app.delete('/users/:id', (req, res) => {
-  db.run('DELETE FROM users WHERE id = ?', [req.params.id], function (err) {
-    if (err) return res.status(500).json({ error: err.message });
+app.delete('/users/:id', async (req, res) => {
+  try {
+    await pool.query("DELETE FROM users WHERE id = $1", [req.params.id]);
     res.json({ success: true });
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Edit a user
-app.put('/users/:id', (req, res) => {
+app.put('/users/:id', async (req, res) => {
   const { name, phone, fee_start_date, fee_due_date } = req.body;
   if (!name || !phone || !fee_start_date || !fee_due_date) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
-  db.run(
-    'UPDATE users SET name = ?, phone = ?, fee_start_date = ?, fee_due_date = ? WHERE id = ?',
-    [name, phone, fee_start_date, fee_due_date, req.params.id],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ success: true });
-    }
-  );
+  try {
+    await pool.query(
+      "UPDATE users SET name = $1, phone = $2, fee_start_date = $3, fee_due_date = $4 WHERE id = $5",
+      [name, phone, fee_start_date, fee_due_date, req.params.id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
