@@ -162,3 +162,22 @@ footer {
     font-size: 0.95rem;
   }
 }
+/* ... existing code ... */
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 10px;
+  background: #e0e3e7;
+}
+::-webkit-scrollbar-thumb {
+  background: #b0b8c1;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a7b3;
+}
+body {
+  scrollbar-color: #b0b8c1 #e0e3e7;
+  scrollbar-width: thin;
+}
+
